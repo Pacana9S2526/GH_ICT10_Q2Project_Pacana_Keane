@@ -1,0 +1,370 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap");
+
+/* ---------- Tokens ---------- */
+:root {
+    --bg: #f2f4fb;
+    --surface: #ffffff;
+    --ink: #1c2240;
+    --ink-soft: #5b6285;
+    --line: #dde1f0;
+    --set-a: #2ec4b6;      /* teal circle */
+    --set-b: #7a6cf0;      /* violet circle */
+    --ok: #137a5a;
+    --ok-bg: #e4f6ee;
+    --no: #b4372f;
+    --no-bg: #fdeceb;
+    --radius: 16px;
+    --font: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #12152b;
+        --surface: #1c2040;
+        --ink: #eef0ff;
+        --ink-soft: #a3a9cf;
+        --line: #2e3460;
+        --ok: #6be3b5;
+        --ok-bg: #12382f;
+        --no: #ff9a92;
+        --no-bg: #3d1e24;
+    }
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    background: var(--bg);
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 0 20px 64px;          /* CHANGED: no top padding so the navbar touches the top */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    font-family: var(--font);
+    color: var(--ink);
+    background: transparent;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+    align-self: stretch;           /* full width of the screen */
+    margin: 0 -20px 36px;          /* cancels body side padding, adds space below (+20px gap = old 56px) */
+    padding: 0.6rem 1rem;
+    position: relative;
+    z-index: 10;                   /* above the Venn circles */
+    background: var(--surface);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 10px 30px -18px rgba(28, 34, 64, 0.45);
+    animation: nav-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* two-color strip along the bottom edge, like the two overlapping sets */
+.navbar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--set-a), var(--set-b));
+}
+
+.navbar .navbar-nav .nav-link {
+    position: relative;
+    padding: 0.55rem 1rem;
+    font-family: var(--font);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    color: var(--ink-soft);
+    border-radius: 10px;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link:focus {
+    color: var(--ink);
+    background: var(--bg);
+}
+
+.navbar .navbar-nav .nav-link.active {
+    color: var(--set-b);
+    background: rgba(122, 108, 240, 0.12);
+}
+
+.navbar .navbar-nav .nav-link:focus-visible {
+    outline: 3px solid var(--set-a);
+    outline-offset: 2px;
+}
+
+/* Hamburger button */
+.navbar .navbar-toggler {
+    padding: 0.35rem 0.6rem;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.navbar .navbar-toggler:hover {
+    border-color: var(--set-b);
+}
+
+.navbar .navbar-toggler:focus {
+    border-color: var(--set-b);
+    box-shadow: 0 0 0 4px rgba(122, 108, 240, 0.18);
+}
+
+/* violet icon works in both light and dark mode */
+.navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%237a6cf0' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Mobile dropdown menu */
+@media (max-width: 575.98px) {
+    .navbar .navbar-collapse {
+        margin-top: 0.7rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid var(--line);
+    }
+}
+
+@keyframes nav-in {
+    from { opacity: 0; transform: translateY(-100%); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Background: two overlapping sets (a Venn diagram) ---------- */
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    width: min(60vw, 520px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+}
+
+body::before {
+    background: var(--set-a);
+    top: 6vh;
+    left: calc(50% - min(48vw, 400px));
+    animation: drift-a 18s ease-in-out infinite alternate;
+}
+
+body::after {
+    background: var(--set-b);
+    top: 14vh;
+    left: calc(50% - min(12vw, 100px));
+    animation: drift-b 22s ease-in-out infinite alternate;
+}
+
+@media (prefers-color-scheme: dark) {
+    body::before,
+    body::after {
+        mix-blend-mode: screen;
+        opacity: 0.22;
+    }
+}
+
+@keyframes drift-a {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(40px, 30px) scale(1.08); }
+}
+
+@keyframes drift-b {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(-50px, 20px) scale(0.94); }
+}
+
+/* ---------- Form card ---------- */
+form {
+    width: 100%;
+    max-width: 440px;
+    padding: 32px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 50px -24px rgba(28, 34, 64, 0.35);
+    animation: card-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes card-in {
+    from { opacity: 0; transform: translateY(24px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Your <h1> is empty in the HTML, so this fills it. Type text inside it to override. */
+form h1 {
+    margin: 0 0 6px;
+    font-size: clamp(1.9rem, 6vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+}
+
+form h1:empty::before {
+    content: "Club member finder";
+}
+
+form br {
+    display: none; /* spacing is handled by flex gap */
+}
+
+/* ---------- Inputs ---------- */
+input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--bg);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]::placeholder {
+    color: var(--ink-soft);
+}
+
+input[type="text"]:hover {
+    border-color: var(--line);
+}
+
+input[type="text"]:focus {
+    background: var(--surface);
+    border-color: var(--set-b);
+    box-shadow: 0 0 0 4px rgba(122, 108, 240, 0.18);
+}
+
+/* ---------- Button ---------- */
+input[type="button"] {
+    margin-top: 4px;
+    padding: 14px 18px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: capitalize;
+    color: #fff;
+    background: linear-gradient(120deg, var(--set-b), #5a4bd8);
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+input[type="button"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -10px rgba(90, 75, 216, 0.7);
+    filter: brightness(1.06);
+}
+
+input[type="button"]:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: none;
+}
+
+input[type="button"]:focus-visible {
+    outline: 3px solid var(--set-a);
+    outline-offset: 3px;
+}
+
+/* ---------- Results ---------- */
+#result {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#result:empty {
+    display: none;
+}
+
+/* Every line PyScript displays is a <div>. They re-animate on each search. */
+#result > div {
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-size: 0.98rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    animation: result-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+#result > div:nth-child(2) { animation-delay: 0.12s; }
+#result > div:nth-child(3) { animation-delay: 0.24s; }
+
+@keyframes result-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 1st: found / not found message */
+#result > div:first-child {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ink);
+    border-left: 6px solid var(--set-b);
+}
+
+/* 2nd: the combined set of all members */
+#result > div:nth-child(2) {
+    color: var(--ink-soft);
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.88rem;
+}
+
+/* 3rd: total count */
+#result > div:nth-child(3) {
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--bg);
+    border-style: dashed;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 480px) {
+    .navbar {
+        margin-bottom: 12px;       /* CHANGED: replaces the old "body padding-top: 32px" */
+    }
+
+    form {
+        padding: 24px 20px 22px;
+    }
+}
+
+/* ---------- Respect reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
